@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="renderCanvas" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      #renderCanvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      #parameters {
+        position: fixed;
+        color: white;
+        text-shadow: 0px 0px 3px #000000;
+      }
+    </style>
+
+    <!-- Babylon.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+  </head>
+  <body>
+    <div id="parameters">
+      <div>
+        URL to glTF:
+        <input
+          id="fileUrl"
+          value="https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf"
+        />
+        <button id="runBtn">RUN</button>
+      </div>
+      <div id="examples">
+        <div>Examples:</div>
+        <pre>
+https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/VC/glTF-Embedded/VC.gltf</pre
+        >
+        <pre>
+https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf</pre
+        >
+      </div>
+    </div>
+
+    <canvas id="renderCanvas"></canvas>
+
+    <script type="module">
+      // https://doc.babylonjs.com/guidedLearning/workshop/House
+      // https://doc.babylonjs.com/divingDeeper/importers/glTF
+
+      var canvas = document.getElementById("renderCanvas");
+
+      var engine = null;
+      var scene = null;
+      var sceneToRender = null;
+      var createDefaultEngine = function () {
+        return new BABYLON.Engine(canvas, true, {
+          preserveDrawingBuffer: true,
+          stencil: true,
+          disableWebGL2Support: false,
+        });
+      };
+
+      var createScene = function (sqarData) {
+        var scene = new BABYLON.Scene(engine);
+
+        // camera
+        var camera = new BABYLON.ArcRotateCamera(
+          "Camera",
+          -Math.PI / 2,
+          Math.PI / 3,
+          15,
+          new BABYLON.Vector3(0, 0, 4.5),
+          scene
+        );
+        camera.attachControl(canvas, true);
+
+        var light = new BABYLON.HemisphericLight(
+          "hemiLight",
+          new BABYLON.Vector3(5, 10, 0),
+          scene
+        );
+
+        var buildFromPlan = function (walls, ply, height, scene) {
+          // material
+          var mat = new BABYLON.StandardMaterial("mat1", scene);
+          mat.alpha = 1.0;
+          mat.diffuseColor = new BABYLON.Color3(1.0, 1.0, 1.0);
+          mat.backFaceCulling = false;
+          //mat.wireframe = true;
+
+          var path1;
+          var path2;
+
+          for (let wallData of walls) {
+            //let wallData = walls[1];
+            path1 = [];
+            path2 = [];
+            var scale = 0.01;
+            var wallHeight = 300; // cm
+            var init_z_position = 0;
+
+            for (let point of wallData.points) {
+              path1.push(
+                new BABYLON.Vector3(
+                  point.x * scale,
+                  init_z_position,
+                  point.y * scale
+                )
+              );
+              path2.push(
+                new BABYLON.Vector3(
+                  point.x * scale,
+                  init_z_position + wallHeight * scale,
+                  point.y * scale
+                )
+              );
+            }
+
+            var ribbon = BABYLON.MeshBuilder.CreateRibbon(
+              "ribbon",
+              { pathArray: [path1, path2] },
+              scene
+            );
+            ribbon.material = mat;
+          }
+        };
+
+        let wallsData = sqarData.walls || [];
+
+        var ply = 0.3;
+        var height = 5;
+
+        var build = buildFromPlan(wallsData, ply, height, scene);
+
+        function drawModels(furnitures) {
+          let chairs = furnitures.filter(
+            (fur) => fur.name == "_SQAR-CHAIR_DESK"
+          );
+          console.log({ chairs });
+          BABYLON.SceneLoader.ImportMesh(
+            "",
+            "model/",
+            "_SQAR-SOFT_SEAT_SWING.gltf",
+            scene,
+            function (newMeshes) {
+              for (let chair of chairs) {
+                let clone1 = newMeshes[1].clone("");
+                let scale = 0.01;
+                clone1.position = new BABYLON.Vector3(
+                  -chair.position.x * scale,
+                  0,
+                  chair.position.y * scale
+                );
+                clone1.scale = new BABYLON.Vector3(
+                  chair.scale.x,
+                  chair.scale.y,
+                  chair.scale.z
+                );
+
+                //clone1.rotation.y = (90 / 360) * 2 * Math.PI; //(chair.rotation / 360) * 2 * Math.PI;
+                clone1.rotation = new BABYLON.Vector3(
+                  0,
+                  (chair.rotation / 360) * 2 * Math.PI,
+                  0
+                );
+                // rotation
+              }
+
+              //console.log({ clone1 });
+              // newMeshes[1].computeWorldMatrix(true);
+              return scene;
+            }
+          );
+        }
+
+        drawModels(sqarData.furnitures);
+        return scene;
+      };
+
+      var engine;
+      var scene;
+
+      var initFunction = async function () {
+        var asyncEngineCreation = async function () {
+          try {
+            return createDefaultEngine();
+          } catch (e) {
+            console.log(
+              "the available createEngine function failed. Creating the default engine instead"
+            );
+            return createDefaultEngine();
+          }
+        };
+
+        engine = await asyncEngineCreation();
+        if (!engine) throw "engine should not be null.";
+
+        async function loadJson(filePath) {
+          return (await fetch(filePath)).json();
+        }
+
+        let sqarData = await loadJson("test.json");
+
+        scene = createScene(sqarData);
+      };
+
+      initFunction().then(() => {
+        sceneToRender = scene;
+        engine.runRenderLoop(function () {
+          if (sceneToRender && sceneToRender.activeCamera) {
+            sceneToRender.render();
+          }
+        });
+      });
+
+      // Resize
+      window.addEventListener("resize", function () {
+        engine.resize();
+      });
+    </script>
+  </body>
+</html>

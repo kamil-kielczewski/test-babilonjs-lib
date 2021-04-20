@@ -1,0 +1,120 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "babylon.js glTF exporter for 3dsmax 2018 v20210401.5"
+  },
+  "scene": 0,
+  "scenes": [{ "nodes": [0, 1] }],
+  "nodes": [
+    {
+      "translation": [-0.406287521, 0.448843956, 0.511667132],
+      "name": "Camera001.Target"
+    },
+    {
+      "mesh": 0,
+      "rotation": [0.0, 1.509958e-7, 0.0, 1.0],
+      "scale": [0.393699974, 0.393699974, 0.393699974],
+      "name": "Fotel_Wiszacy-A"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "NORMAL": 2,
+            "TEXCOORD_0": 3,
+            "TEXCOORD_1": 4
+          },
+          "indices": 0,
+          "material": 0
+        }
+      ],
+      "name": "Fotel_Wiszacy-A"
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 77916,
+      "type": "SCALAR",
+      "name": "accessorIndices"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 77916,
+      "max": [1.51929581, 7.637695, 0.9799109],
+      "min": [-1.51929581, 0.4918227, -0.9799109],
+      "type": "VEC3",
+      "name": "accessorPositions"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 934992,
+      "componentType": 5126,
+      "count": 77916,
+      "type": "VEC3",
+      "name": "accessorNormals"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 77916,
+      "type": "VEC2",
+      "name": "accessorUVs"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 623328,
+      "componentType": 5126,
+      "count": 77916,
+      "type": "VEC2",
+      "name": "accessorUV2s"
+    }
+  ],
+  "bufferViews": [
+    { "buffer": 0, "byteLength": 311664, "name": "bufferViewScalar" },
+    {
+      "buffer": 0,
+      "byteOffset": 311664,
+      "byteLength": 1869984,
+      "byteStride": 12,
+      "name": "bufferViewFloatVec3"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2181648,
+      "byteLength": 1246656,
+      "byteStride": 8,
+      "name": "bufferViewFloatVec2"
+    }
+  ],
+  "buffers": [{ "uri": "_SQAR-SOFT_SEAT_SWING.bin", "byteLength": 3428304 }],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorTexture": { "index": 1 },
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.450053632
+      },
+      "normalTexture": { "index": 0 },
+      "name": "Material #656"
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "name": "_SQAR-SOFT_SEAT_SWING_Normalmap.png"
+    },
+    { "sampler": 0, "source": 1, "name": "_SQAR-SOFT_SEAT_SWING_Albedo.png" }
+  ],
+  "images": [
+    { "uri": "_SQAR-SOFT_SEAT_SWING_Normalmap.png" },
+    { "uri": "_SQAR-SOFT_SEAT_SWING_Albedo.png" }
+  ],
+  "samplers": [{ "magFilter": 9729, "minFilter": 9987 }]
+}

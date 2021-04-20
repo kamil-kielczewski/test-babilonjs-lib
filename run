@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+cd -- "$(dirname "$0")"
+
+docker pull pierrezemb/gostatic
+CURRENT_DIR=`pwd`
+
+docker rm -f sqar-treejs | :
+docker run -d -p 8088:8043 --name sqar-treejs -v $CURRENT_DIR:/srv/http pierrezemb/gostatic
+echo "Go to: http://localhost:8088"
+open http://localhost:8088
