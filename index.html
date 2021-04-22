@@ -137,17 +137,41 @@
         };
 
         let wallsData = sqarData.walls || [];
+        console.log({ sqarData });
 
         var ply = 0.3;
         var height = 5;
 
         var build = buildFromPlan(wallsData, ply, height, scene);
 
+        function drawFloors(floors) {
+          var mat = new BABYLON.StandardMaterial("mat1", scene);
+          mat.alpha = 1.0;
+          mat.diffuseColor = new BABYLON.Color3(1, 1, 0.8);
+          mat.backFaceCulling = false;
+
+          for (let floor of floors) {
+            let poly = floor.points.map((point) => {
+              console.log({ point });
+              return new BABYLON.Vector2(point.x / 100, point.y / 100);
+            });
+            const polygon_triangulation = new BABYLON.PolygonMeshBuilder(
+              "name",
+              poly,
+              scene
+            );
+            const polygon = polygon_triangulation.build();
+            polygon.material = mat;
+          }
+        }
+
+        drawFloors(sqarData.floors || []);
+
         function drawModels(furnitures) {
           let chairs = furnitures.filter(
             (fur) => fur.name == "_SQAR-CHAIR_DESK"
           );
-          console.log({ chairs });
+
           BABYLON.SceneLoader.ImportMesh(
             "",
             "model/",
@@ -168,17 +192,12 @@
                   chair.scale.z
                 );
 
-                //clone1.rotation.y = (90 / 360) * 2 * Math.PI; //(chair.rotation / 360) * 2 * Math.PI;
                 clone1.rotation = new BABYLON.Vector3(
                   0,
                   (chair.rotation / 360) * 2 * Math.PI,
                   0
                 );
-                // rotation
               }
-
-              //console.log({ clone1 });
-              // newMeshes[1].computeWorldMatrix(true);
               return scene;
             }
           );
